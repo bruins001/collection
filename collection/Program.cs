@@ -1,10 +1,19 @@
+using collection;
 using collection.Components;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Default"] +
+                      "Userid=" + builder.Configuration["ConnectionStrings:DefaultUsername"] + ";" +
+                      "Password=" + builder.Configuration["ConnectionStrings:DefaultPassword"] + ";");
+});
 
 var app = builder.Build();
 
