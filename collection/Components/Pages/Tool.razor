@@ -1,7 +1,23 @@
 @page "/tools"
-<h3>Tool</h3>
+@using collection.Services
+@inject IToolService toolService
 
-<table class="table">
+<h1>Tools table</h1>
+
+@if (_tools == null)
+{
+    if (_toolPageError == null)
+    {
+        <h1>Tools table is loading.....</h1>
+    }
+    else
+    {
+        <h1>@_toolPageError</h1>
+    }
+}
+else
+{
+    <table class="table">
     <thead>
     <tr>
         <th scope="col">#</th>
@@ -15,79 +31,38 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <th scope="row">1</th>
-        <td>Makita</td>
-        <td>18 V Hybride boor-/schroefmachine</td>
-        <td>schroefmachine</td>
-        <td>0088381673525</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">2</th>
-        <td>Makita</td>
-        <td>Slagschroefbitset 36-delig</td>
-        <td>slagschroefbitset</td>
-        <td>0197050351821</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">3</th>
-        <td>Makita</td>
-        <td>XGT 40 V Max 125 mm Handpalm excenter schuurmachine</td>
-        <td>schuurmachine</td>
-        <td>8720023221900</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">4</th>
-        <td>Makita</td>
-        <td>XGT 40 V Max Cirkelzaag 415 mm</td>
-        <td>cirkelzaag</td>
-        <td>0197050007438</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">5</th>
-        <td>Makita</td>
-        <td>XGT 40 V Max Bandschuurmachine 76mm</td>
-        <td>bandschuurmachine</td>
-        <td>0197050006714</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">6</th>
-        <td>Makita</td>
-        <td>XGT 40 V Max 150 mm Handpalm excenter schuurmachine</td>
-        <td>schuurmachine</td>
-        <td>8720023221917</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
-    <tr>
-        <th scope="row">7</th>
-        <td>Makita</td>
-        <td>XGT 40 V Max Breekhamer</td>
-        <td>slagmoersleutel</td>
-        <td>0088381732703</td>
-        <td><button class="btn btn-info">Details</button></td>
-        <td><button class="btn btn-primary">Edit</button></td>
-        <td><button class="btn btn-danger">Delete</button></td>
-    </tr>
+        @foreach (collection.Model.Tool tool in _tools)
+        {
+            <tr>
+                <th scope="row">@tool.Id</th>
+                <td>@tool.Brand.Name</td>
+                <td>@tool.Name</td>
+                <td>@tool.Type</td>
+                <td>@tool.Ean13</td>
+                <td><button class="btn btn-info">Details</button></td>
+                <td><button class="btn btn-primary">Edit</button></td>
+                <td><button class="btn btn-danger">Delete</button></td>
+            </tr>
+        }
     </tbody>
-</table>
+    </table>
+}
 
 @code {
+    private IEnumerable<collection.Model.Tool>? _tools;
+    private string? _toolPageError;
     
+    protected override async Task OnInitializedAsync()
+    {
+        IEnumerable<collection.Model.Tool>? response = await toolService.GetToolsPage(10, 1);
+        
+        if (response == null)
+        {
+            _toolPageError = "Couldn't fetch the tools.";
+        }
+        else
+        {
+            _tools = response;
+        }
+    }
 }
