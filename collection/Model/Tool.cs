@@ -11,13 +11,13 @@ public class Tool
     [Required(ErrorMessage = "Please assign a name to this tool.")]
     [MaxLength(200)]
     public string Name { get; set; }
-    
+
     [Display(Name = "brand")]
     [Required(ErrorMessage = "Please assign a brand name to this tool.")]
     public Brand Brand { get; set; }
-    
+
     [Display(Name = "description")]
-    public string Description { get; set; }
+    public string? Description { get; set; } = null;
     
     [Display(Name = "type")]
     [Required(ErrorMessage = "Please assign a type to this tool.")]
