@@ -1,5 +1,6 @@
 using collection;
 using collection.Components;
+using collection.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                       "Userid=" + builder.Configuration["ConnectionStrings:DefaultUsername"] + ";" +
                       "Password=" + builder.Configuration["ConnectionStrings:DefaultPassword"] + ";");
 });
+
+builder.Services.AddScoped<IToolRepository, ToolRepository>();
 
 var app = builder.Build();
 
