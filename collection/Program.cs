@@ -1,6 +1,7 @@
 using collection;
 using collection.Components;
 using collection.Repository;
+using collection.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<IToolRepository, ToolRepository>();
+builder.Services.AddScoped<IToolService, ToolService>();
 
 var app = builder.Build();
 
