@@ -39,7 +39,7 @@ else
                 <td>@tool.Name</td>
                 <td>@tool.Type</td>
                 <td>@tool.Ean13</td>
-                <td><button class="btn btn-info">Details</button></td>
+                <td><NavLink href=@($"/tools/{tool.Id}")><button class="btn btn-info">Details</button></NavLink></td>
                 <td><button class="btn btn-primary">Edit</button></td>
                 <td><button class="btn btn-danger">Delete</button></td>
             </tr>

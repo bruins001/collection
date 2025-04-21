@@ -30,4 +30,24 @@ public class ToolService : IToolService
 
         return tools;
     }
+    
+    /// <summary>
+    /// Gets the specific tool selected by the id you want with all the details.
+    /// </summary>
+    /// <param name="id">The id of the tool you want to find.</param>
+    /// <returns>An instance of the model Tool.</returns>
+    public async Task<Tool?> GetToolById(int id)
+    {
+        Tool? tool = null;
+        
+        try
+        {
+            tool = await _toolRepository.GetToolByIdAsync(id);
+        }
+        // Tool should stay null but request should not crash
+        catch (Exception _)
+        { }
+        
+        return tool;
+    }
 }

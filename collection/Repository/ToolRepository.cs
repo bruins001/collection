@@ -34,10 +34,16 @@ public class ToolRepository : IToolRepository
         
         return await _context.Tools.OrderBy(tool => tool.Name).Skip((page - 1) * size).Take(size).Include("Brand").ToListAsync();
     }
+    
+    /// <summary>
+    /// Gets the specific tool selected by the id you want with all the details.
+    /// </summary>
+    /// <param name="id">The id of the tool you want to find.</param>
+    /// <returns>An instance of the model Tool.</returns>
 
-    public async Task<Tool> GetToolByIdAsync(int id)
+    public async Task<Tool?> GetToolByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Tools.Include("Brand").SingleOrDefaultAsync(tool => tool.Id == id);
     }
 
     public async Task<Tool> InsertOneToolAsync(string type)

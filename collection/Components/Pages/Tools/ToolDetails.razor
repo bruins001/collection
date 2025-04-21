@@ -1,0 +1,59 @@
+@page "/tools/{id:int}"
+@using collection.Services
+@inject IToolService toolService
+
+<h1 class="display-5">Tool details</h1>
+@if (_tool == null) 
+{ @* The page crashes without an loading screen, because the _tool may be null. *@
+    @if (_toolErrorMessage == null)
+    {
+        <h2 class="display-6">Tool is loading.....</h2>
+    }
+    else
+    {
+        <h2 class="display-6">@_toolErrorMessage</h2>
+    }
+}
+else
+{
+    <p>
+        Tool name: @_tool.Name<br/>
+        Tool brand: @_tool.Brand.Name<br/>
+    </p>
+    <p>
+        Tool type: @_tool.Type<br/>
+        Tool is electric: @_tool.Electrical<br/>
+        Tool product code: @_tool.ProductCode<br/>
+        Tool ean 13: @_tool.Ean13<br/>
+    </p>
+    @if (@_tool.Description != null)
+    {
+        <h2 class="display-6">Description:</h2>
+        <p>@_tool.Description</p><br/>
+    }
+
+    <button class="btn btn-primary">Edit</button>
+    <button class="btn btn-danger">Delete</button>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private string? _toolErrorMessage; 
+    private collection.Model.Tool? _tool;
+
+    protected override async Task OnInitializedAsync()
+    {
+        collection.Model.Tool? response = await toolService.GetToolById(Id);
+
+        if (response == null)
+        {
+            _toolErrorMessage = "Could not fetch tool. Tool might not exist.";
+        }
+        else
+        {
+            _tool = response;
+        }
+    } 
+}
