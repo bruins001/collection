@@ -62,9 +62,8 @@ dotnet user-secrets set "ConnectionStrings:DefaultPassword" {'password'} --proje
 ```
 Change the username, password and project path and remove the {}, but leave the "" and ''.
 
-9. Create a migration and migrate it:
+9. Apply the migrations:
 ```
-dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
