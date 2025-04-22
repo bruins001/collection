@@ -1,5 +1,4 @@
 using collection.Model;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace collection.Repository;
@@ -14,6 +13,14 @@ public class ToolRepository : IToolRepository
         _context = context;
     }
     
+    /// <summary>
+    /// Makes a page with the size and page parameters. The page is based on the Tool and Brand model.
+    /// The page does only contain the data based on the Tool and Brand model. No page size or table count for example. 
+    /// </summary>
+    /// <param name="size">The size the page should be.</param>
+    /// <param name="page">The page number it should return.</param>
+    /// <returns>Only the with the Tool and Model data filled in, no other parameters like page size and table count.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Triggers if the size is larger then 1000 or if the size or page parameters are out of range.</exception>
     public async Task<IEnumerable<Tool>> GetToolsPageAsync(int size, int page)
     {
         if (size < 1 || size > 1000)
