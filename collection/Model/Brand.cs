@@ -9,5 +9,5 @@ public class Brand
     [Display(Name = "name")]
     [Required (ErrorMessage = "Please assign a name to this brand.")]
     [MaxLength(200)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }
