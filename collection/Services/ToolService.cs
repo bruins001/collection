@@ -16,7 +16,13 @@ public class ToolService : IToolService
         _toolRepository = toolRepository;
     }
 
-    public async Task<IEnumerable<Tool>> GetToolsPage(int size, int page)
+    /// <summary>
+    /// Gets the toolpage from the Tool repository and returns it.
+    /// </summary>
+    /// <param name="size">The size of the page</param>
+    /// <param name="page">The page number</param>
+    /// <returns>The page filled with instances of the Tool and Brand model. No data about the page like last page.</returns>
+    public async Task<IEnumerable<Tool>?> GetToolsPage(int size, int page)
     {
         IEnumerable<Tool>? tools = null;
         
@@ -25,8 +31,10 @@ public class ToolService : IToolService
             tools = await _toolRepository.GetToolsPageAsync(size, page);
         }
         // Tool should stay null but request should not crash
-        catch (Exception _)
-        { }
+        catch
+        {
+            // ignored
+        }
 
         return tools;
     }
@@ -45,9 +53,11 @@ public class ToolService : IToolService
             tool = await _toolRepository.GetToolByIdAsync(id);
         }
         // Tool should stay null but request should not crash
-        catch (Exception _)
-        { }
-        
+        catch
+        {
+            // ignored
+        }
+
         return tool;
     }
 }
