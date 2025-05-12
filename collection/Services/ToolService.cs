@@ -17,26 +17,42 @@ public class ToolService : IToolService
     }
 
     /// <summary>
+    /// Validates what the parameters as far as it can without the database.
     /// Gets the toolpage from the Tool repository and returns it.
     /// </summary>
-    /// <param name="size">The size of the page</param>
-    /// <param name="page">The page number</param>
-    /// <returns>The page filled with instances of the Tool and Brand model. No data about the page like last page.</returns>
-    public async Task<IEnumerable<Tool>?> GetToolsPage(int size, int page)
+    /// <param name="pageSize">The size of the currentpage</param>
+    /// <param name="currentpage">The currentpage number</param>
+    /// <returns>The currentpage filled with instances of the Tool and Brand model. No data about the currentpage like last currentpage.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Triggers if the size is not 10, 25, 50 or 100 and if currentPage is smallar than 0.</exception>
+    public async Task<IPagination?> GetToolsPage(int pageSize, int currentPage, string orderBy = "Name")
     {
-        IEnumerable<Tool>? tools = null;
+        IPagination toolPage = new Pagination()
+        {
+            CurrentPage = currentPage,
+            PageSize = pageSize,
+            OrderBy = orderBy.ToLower(),
+        };
+        
+        if (!toolPage.AvailablePageSize.Contains(pageSize))
+        {
+            throw new ArgumentOutOfRangeException("Page size may only be 10, 25, 50, 100.");
+        } 
+        else if (toolPage.CurrentPage < 1)
+        {
+            throw new ArgumentOutOfRangeException("Tool currentpage must be greater than 0.");
+        }
         
         try
         {
-            tools = await _toolRepository.GetToolsPageAsync(size, page);
+            toolPage = await _toolRepository.GetToolsPageAsync(toolPage);
         }
         // Tool should stay null but request should not crash
         catch
         {
-            // ignored
+            return null;
         }
 
-        return tools;
+        return toolPage;
     }
     
     /// <summary>

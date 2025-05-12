@@ -1,68 +1,10 @@
 @page "/tools"
-@using collection.Services
-@inject IToolService toolService
+@using collection.Components.Pagination
 
 <h1>Tools table</h1>
 
-@if (_tools == null)
-{
-    if (_toolPageError == null)
-    {
-        <h1>Tools table is loading.....</h1>
-    }
-    else
-    {
-        <h1>@_toolPageError</h1>
-    }
-}
-else
-{
-    <table class="table">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Brand</th>
-        <th scope="col">Name</th>
-        <th scope="col">Type</th>
-        <th scope="col">EAN 13</th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (collection.Model.Tool tool in _tools)
-        {
-            <tr>
-                <th scope="row">@tool.Id</th>
-                <td>@tool.Brand.Name</td>
-                <td>@tool.Name</td>
-                <td>@tool.Type</td>
-                <td>@tool.Ean13</td>
-                <td><NavLink href=@($"/tools/{tool.Id}")><button class="btn btn-info">Details</button></NavLink></td>
-                <td><button class="btn btn-primary">Edit</button></td>
-                <td><button class="btn btn-danger">Delete</button></td>
-            </tr>
-        }
-    </tbody>
-    </table>
-}
+<ToolPagination></ToolPagination>
 
 @code {
-    private IEnumerable<collection.Model.Tool>? _tools;
-    private string? _toolPageError;
     
-    protected override async Task OnInitializedAsync()
-    {
-        IEnumerable<collection.Model.Tool>? response = await toolService.GetToolsPage(10, 1);
-        
-        if (response == null)
-        {
-            _toolPageError = "Couldn't fetch the tools.";
-        }
-        else
-        {
-            _tools = response;
-        }
-    }
 }

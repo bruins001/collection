@@ -4,6 +4,6 @@ namespace collection.Services;
 
 public interface IToolService
 {
-    Task<IEnumerable<Tool>?> GetToolsPage(int size, int page);
+    Task<IPagination?> GetToolsPage(int pageSize, int currentPage, string orderBy = "Name");
     Task<Tool?> GetToolById(int id);
 }

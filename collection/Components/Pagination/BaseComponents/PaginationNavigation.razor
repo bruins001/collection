@@ -1,0 +1,52 @@
+@using collection.Model
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link cursor-pointer @(PaginationInfo.CurrentPage == 1 ? "disabled" : "")"
+               aria-label="Previous"
+               @onclick="() => LoadPage(PaginationInfo.CurrentPage - 1)">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        
+        @for (int pageNumber = 1; pageNumber <= @PaginationInfo.LastPage; pageNumber++)
+        {
+            int currentPage = pageNumber;
+        
+            <li class="page-item @(PaginationInfo.CurrentPage == pageNumber ? "active" : "")"
+                @onclick="() => LoadPage(currentPage)">
+                <a class="page-link cursor-pointer">@pageNumber</a>
+            </li>
+        }
+        
+        <li class="page-item">
+            <a class="page-link cursor-pointer @(PaginationInfo.CurrentPage == PaginationInfo.LastPage ? "disabled" : "")"
+               aria-label="Next"
+               @onclick="() => LoadPage(PaginationInfo.CurrentPage + 1)">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@code {
+    [Parameter] public required IPagination PaginationInfo { get; set; }
+    [Parameter] public required Func<int, Task<IPagination?>> LoadPageFunction { get; set; }
+    [Parameter] public EventCallback<IPagination> PaginationInfoChanged { get; set; }
+
+    private async Task LoadPage(int pageToLoad)
+    {
+        IPagination? response = await LoadPageFunction.Invoke(pageToLoad);
+
+        if (response != null)
+        {
+            await OnPaginationInfoChanged(response);
+        }
+    }
+
+    private async Task OnPaginationInfoChanged(IPagination updatedPaginationInfo)
+    {
+        PaginationInfo = updatedPaginationInfo;
+        await PaginationInfoChanged.InvokeAsync(updatedPaginationInfo);
+    }
+}

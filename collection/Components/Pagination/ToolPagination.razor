@@ -1,0 +1,107 @@
+@inject IToolService toolService
+
+@using collection.Components.Pagination.BaseComponents
+@using collection.Model
+@using collection.Services
+
+@rendermode InteractiveServer
+
+@if (Tools == null)
+{
+    if (ToolPageError == null)
+    {
+        <h1>Tools table is loading.....</h1>
+    }
+    else
+    {
+        <h1>@ToolPageError</h1>
+    }
+}
+else if (Tools.Data != null) // Should not be null when it reaches this point, but the C# compiler is happy now
+{
+    <PaginationTable LoadPageFunction="LoadToolPage">
+        <TableHeader>
+            <th scope="col">#</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">EAN 13</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </TableHeader>
+        <TableBody>
+            @foreach (Tool tool in Tools.Data)
+            {
+                <tr>
+                    <th scope="row">@tool.Id</th>
+                    <td>@tool.Brand.Name</td>
+                    <td>@tool.Name</td>
+                    <td>@tool.Type</td>
+                    <td>@tool.Ean13</td>
+                    <td><NavLink href=@($"/tools/{tool.Id}")><button class="btn btn-info">Details</button></NavLink></td>
+                    <td><button class="btn btn-primary">Edit</button></td>
+                    <td><button class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        </TableBody>
+    </PaginationTable>
+    
+    <PaginationNavigation @bind-PaginationInfo="Tools" LoadPageFunction="LoadToolPage"></PaginationNavigation>
+}
+else
+{
+    <p>Something went wrong!</p>
+}
+
+@code {
+    [Parameter]
+    public IPagination? Tools { get; set; }
+
+    private string? ToolPageError { get; set; }
+    
+    private readonly int _initialPageSize = 10;
+    private readonly int _initialCurrentPage = 1;
+    private readonly string _initialOrderBy = "Name";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadToolPage(_initialPageSize, _initialCurrentPage, _initialOrderBy);
+    }
+    
+    /// <summary>
+    /// Loads and sets the ToolPage to the Tools property.
+    /// Returns a boolean that tells if it was successful.
+    /// </summary>
+    /// <param name="pageSize">The size of the page.</param>
+    /// <param name="pageToLoad">The page the user wants to load.</param>
+    /// <param name="orderBy">The column you want to OrderBy.</param>
+    /// <returns>A boolean true if it was successful false if it wasn't.</returns>
+    private async Task<IPagination?> LoadToolPage(int pageSize, int pageToLoad, string orderBy = "Name")
+    {
+        IPagination? response = await toolService.GetToolsPage(pageSize, pageToLoad, orderBy);
+
+        if (response == null)
+        {
+            ToolPageError = "Couldn't fetch the tools.";
+        }
+        else
+        {
+            Tools = response;
+        }
+
+        return response;
+    }
+
+    private async Task<IPagination?> LoadToolPage(int pageToLoad)
+    {
+        if (Tools?.PageSize != null && Tools?.OrderBy != null)
+        {
+            return await LoadToolPage(Tools.PageSize, pageToLoad, Tools.OrderBy);
+        }
+        else // If the page hasn't properly initialized
+        {
+            return await LoadToolPage(_initialPageSize, pageToLoad, _initialOrderBy);
+        }
+    }
+}
